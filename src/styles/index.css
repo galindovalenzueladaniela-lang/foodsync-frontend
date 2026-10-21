@@ -1,0 +1,53 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Alto de cada pantalla. La vista previa lo reemplaza por el alto del marco del teléfono. */
+  --app-h: 100dvh;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-background font-sans text-ink antialiased; }
+  button, input, textarea { font: inherit; }
+}
+
+@layer components {
+  /* Fondo ambiental de la sala (tokens.css .ambient), en versión suave para pantallas móviles */
+  .ambient-soft {
+    background:
+      radial-gradient(420px 300px at 0% -5%, rgba(198, 134, 63, 0.16), transparent 65%),
+      radial-gradient(380px 320px at 105% 105%, rgba(110, 46, 63, 0.10), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(90, 60, 40, 0.022) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(90deg, rgba(90, 60, 40, 0.018) 0 1px, transparent 1px 5px),
+      var(--color-background);
+  }
+  .glass {
+    background: var(--color-glass);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 10px 30px -14px rgba(74, 45, 30, 0.25);
+    backdrop-filter: blur(var(--blur-md)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--blur-md)) saturate(140%);
+  }
+  .floating {
+    background: var(--color-floating);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: inset 0 1px 0 #fff, 0 30px 70px -20px rgba(58, 35, 25, 0.4);
+    backdrop-filter: blur(var(--blur-lg)) saturate(150%);
+    -webkit-backdrop-filter: blur(var(--blur-lg)) saturate(150%);
+  }
+  .card { @apply rounded-lg border border-line-subtle bg-surface shadow-card; }
+  .display { font-family: var(--font-display); font-weight: 400; }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass, .floating { background: var(--color-surface); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .floating { background: var(--color-surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
