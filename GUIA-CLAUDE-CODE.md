@@ -50,7 +50,8 @@ npm run dev:movil
 ```
 
 Abre en el teléfono la dirección `https://<ip-de-tu-computadora>:5173/escanear` (misma red wifi),
-acepta el aviso del certificado de desarrollo y apunta al QR de prueba de la vista previa.
+acepta el aviso del certificado de desarrollo y apunta a un QR con el token de la mesa de ejemplo
+(p. ej. uno que lleve `https://app.foodsync.example/qr/casa-olivo-centro-m7`).
 
 ## Ideas de siguientes prompts
 
