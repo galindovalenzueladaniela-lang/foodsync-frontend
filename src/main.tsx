@@ -8,7 +8,7 @@ import './styles/index.css';
 const root = createRoot(document.getElementById('root')!);
 
 if (import.meta.env.VITE_DEMO === 'true') {
-  // Vista previa: marco de teléfono, navegación por pasos y datos de ejemplo.
+  // Vista previa: marco de teléfono y datos de ejemplo.
   import('./demo/DemoShell').then(({ DemoShell }) => root.render(<StrictMode><DemoShell /></StrictMode>));
 } else {
   root.render(

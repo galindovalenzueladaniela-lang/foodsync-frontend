@@ -8,7 +8,7 @@ Stack según la tesis (Anexo D): **TypeScript + React + Vite**, **Tailwind CSS**
 ```bash
 npm install
 npm run dev          # app real (sin VITE_API_URL usa datos de ejemplo)
-npm run dev:demo     # vista previa con marco de teléfono y navegación por pasos
+npm run dev:demo     # vista previa con marco de teléfono y datos de ejemplo
 npm test             # pruebas de carrito y cuenta
 npm run build        # producción en dist/
 ```
