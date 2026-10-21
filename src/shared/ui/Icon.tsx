@@ -28,6 +28,9 @@ const PATHS = {
 
 export type IconName = keyof typeof PATHS;
 
+/** Trazo de un icono, para dibujarlo con animación (p. ej. la palomita de AnimatedCheck). */
+export const iconPath = (name: IconName) => PATHS[name];
+
 interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'name'> {
   name: IconName;
   size?: number;

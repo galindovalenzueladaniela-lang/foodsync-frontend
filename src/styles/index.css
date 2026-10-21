@@ -45,6 +45,57 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
 }
 
+/* Palomita de éxito (shared/ui/AnimatedCheck). Los estilos base son el estado final;
+   las animaciones solo llevan hasta él (onda y destellos quedan ocultos antes y después).
+   Halos con los tonos success-soft / success de tokens.css. */
+.check-anim__disco {
+  box-shadow: 0 0 0 12px rgba(227, 238, 227, 0.5), 0 0 0 24px rgba(227, 238, 227, 0.25);
+  animation: check-pop 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both, check-halo 700ms 260ms ease-out both;
+}
+.check-anim--solid .check-anim__disco {
+  box-shadow: 0 0 0 7px rgba(93, 140, 102, 0.28), 0 14px 28px -12px rgba(42, 32, 27, 0.55);
+}
+.check-anim__trazo {
+  stroke-dasharray: 1;
+  animation: check-trazo 440ms 250ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.check-anim__onda {
+  opacity: 0;
+  border: 2px solid var(--color-success);
+  animation: check-onda 850ms 320ms ease-out;
+}
+.check-anim__destello {
+  opacity: 0;
+  animation: check-destello 780ms 380ms cubic-bezier(0.15, 0.7, 0.3, 1);
+}
+@keyframes check-pop {
+  0% { opacity: 0; transform: scale(0.3); }
+  55% { opacity: 1; transform: scale(1.08); }
+  78% { transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes check-halo {
+  from { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+}
+@keyframes check-trazo {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  1% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes check-onda {
+  from { opacity: 0.6; transform: scale(0.9); }
+  to { opacity: 0; transform: scale(1.9); }
+}
+@keyframes check-destello {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * var(--r))) scale(0.3); }
+  25% { opacity: 1; }
+  45% { transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * (var(--r) + var(--d) * 0.75))) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * (var(--r) + var(--d)))) scale(0.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .check-anim * { animation: none !important; }
+}
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass, .floating { background: var(--color-surface); }
 }

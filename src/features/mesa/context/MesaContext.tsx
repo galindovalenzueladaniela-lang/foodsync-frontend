@@ -13,11 +13,13 @@ const Ctx = createContext<MesaValue | null>(null);
 
 type Estado = { tipo: 'cargando' } | { tipo: 'error' } | { tipo: 'listo'; ctx: MesaContexto };
 
-export function useMesaToken(token: string) {
+/** Resuelve el token de la mesa. Con `null` (aún no se lee ningún QR) no consulta y queda en 'cargando'. */
+export function useMesaToken(token: string | null) {
   const [estado, setEstado] = useState<Estado>({ tipo: 'cargando' });
   useEffect(() => {
     let vivo = true;
     setEstado({ tipo: 'cargando' });
+    if (!token) return;
     resolverMesa(token)
       .then((ctx) => vivo && setEstado({ tipo: 'listo', ctx }))
       .catch(() => vivo && setEstado({ tipo: 'error' }));

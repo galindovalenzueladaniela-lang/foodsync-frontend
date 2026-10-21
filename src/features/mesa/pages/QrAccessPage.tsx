@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { rutas } from '../../../app/rutas';
 import { Screen } from '../../../shared/layout/Screen';
+import { AnimatedCheck } from '../../../shared/ui/AnimatedCheck';
 import { Button } from '../../../shared/ui/Button';
 import { Icon } from '../../../shared/ui/Icon';
 import { cn } from '../../../shared/lib/cn';
@@ -37,6 +38,7 @@ export function QrAccessPage() {
     return true;
   }, []);
   const { videoRef, estado: camara, reintentar } = useQrScanner(onDetect, escaneando);
+  const mesa = useMesaToken(leido);
 
   // Un QR ajeno no detiene la cámara: se avisa un momento y se sigue buscando.
   useEffect(() => {
@@ -63,13 +65,13 @@ export function QrAccessPage() {
         Escanea el código de tu mesa<br />con la cámara del teléfono
       </p>
 
-      <Visor enVivo={enVivo} leido={leido} rechazado={rechazado} />
+      <Visor enVivo={enVivo} leido={leido} encontrada={mesa.tipo === 'listo'} rechazado={rechazado} />
 
       <div className="flex-1" />
 
       <section className="floating relative flex w-full flex-col gap-3.5 rounded-xl p-5 text-ink" aria-live="polite">
         {leido ? (
-          <MesaEncontrada token={leido} onOtra={params.token ? undefined : otraVez} />
+          <MesaEncontrada token={leido} estado={mesa} onOtra={params.token ? undefined : otraVez} />
         ) : AVISOS[camara] ? (
           <>
             <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-warning-soft px-2.5 py-1 text-xs font-semibold text-warning-text">
@@ -89,7 +91,7 @@ export function QrAccessPage() {
   );
 }
 
-function Visor({ enVivo, leido, rechazado }: { enVivo: boolean; leido: string | null; rechazado: boolean }) {
+function Visor({ enVivo, leido, encontrada, rechazado }: { enVivo: boolean; leido: string | null; encontrada: boolean; rechazado: boolean }) {
   const esquinas = ['left-0 top-0 border-l-4 border-t-4 rounded-tl-xl', 'right-0 top-0 border-r-4 border-t-4 rounded-tr-xl', 'left-0 bottom-0 border-b-4 border-l-4 rounded-bl-xl', 'right-0 bottom-0 border-b-4 border-r-4 rounded-br-xl'];
   return (
     <div className="relative flex h-[232px] w-[232px] items-center justify-center" aria-hidden="true">
@@ -103,13 +105,18 @@ function Visor({ enVivo, leido, rechazado }: { enVivo: boolean; leido: string | 
           <span className="display text-lg leading-5 text-ink">{leido ? 'Listo' : ' '}</span>
         </div>
       )}
+      {/* Mesa encontrada: palomita animada sobre el código */}
+      {encontrada && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <AnimatedCheck tone="solid" size={76} />
+        </div>
+      )}
       {rechazado && <span className="absolute -bottom-9 rounded-full bg-error-soft px-3 py-1 text-xs font-semibold text-error-text">Este código no es de una mesa</span>}
     </div>
   );
 }
 
-function MesaEncontrada({ token, onOtra }: { token: string; onOtra?: () => void }) {
-  const estado = useMesaToken(token);
+function MesaEncontrada({ token, estado, onOtra }: { token: string; estado: ReturnType<typeof useMesaToken>; onOtra?: () => void }) {
   const navigate = useNavigate();
   if (estado.tipo === 'cargando') return <p className="text-sm text-ink-secondary">Buscando tu mesa…</p>;
   if (estado.tipo === 'error') {
