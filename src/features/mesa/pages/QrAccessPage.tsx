@@ -99,18 +99,14 @@ function Visor({ enVivo, leido, encontrada, rechazado }: { enVivo: boolean; leid
         <span key={c} className={cn('absolute h-[38px] w-[38px] transition-colors', rechazado ? 'border-error' : leido ? 'border-success' : 'border-accent', c)} />
       ))}
       {enVivo && <span className="absolute inset-x-6 top-1/2 h-0.5 animate-pulse rounded-full bg-accent/80 shadow-[0_0_12px_rgba(198,134,63,.9)]" />}
-      {!enVivo && (
+      {/* Código de muestra mientras no hay cámara; al leer un QR el visor queda libre para la palomita. */}
+      {!enVivo && !leido && (
         <div className="flex rotate-[-4deg] flex-col items-center gap-2 rounded-[14px] bg-[#FFFCF7] p-3.5 pb-2.5 shadow-lg">
-          <QrGlyph semilla={leido ?? 'foodsync'} size={128} />
-          <span className="display text-lg leading-5 text-ink">{leido ? 'Listo' : ' '}</span>
+          <QrGlyph semilla="foodsync" size={128} />
+          <span className="display text-lg leading-5 text-ink">{' '}</span>
         </div>
       )}
-      {/* Mesa encontrada: palomita animada sobre el código */}
-      {encontrada && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <AnimatedCheck tone="solid" size={76} />
-        </div>
-      )}
+      {encontrada && <AnimatedCheck tone="solid" size={104} />}
       {rechazado && <span className="absolute -bottom-9 rounded-full bg-error-soft px-3 py-1 text-xs font-semibold text-error-text">Este código no es de una mesa</span>}
     </div>
   );

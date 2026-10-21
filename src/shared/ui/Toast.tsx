@@ -18,7 +18,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div aria-live="polite" className="pointer-events-none absolute inset-x-0 top-3 z-50 flex flex-col items-center gap-2 px-4">
         {avisos.map((a) => (
-          <div key={a.id} className="floating flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-sm font-semibold">
+          <div key={a.id} className="floating aviso-entra flex items-center gap-2.5 rounded-lg px-3.5 py-2.5 text-sm font-semibold">
             <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-success-soft text-success-text"><Icon name={a.icon} size={16} /></span>
             {a.texto}
           </div>

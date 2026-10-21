@@ -8,6 +8,7 @@ import type { EstadoPedido } from '../../../services/types';
 import { useMesa } from '../../mesa/context/MesaContext';
 import { EstadoTimeline } from '../components/EstadoTimeline';
 import { useAhora, usePedido } from '../hooks/usePedido';
+import { useAvisoEstado } from '../hooks/useAvisoEstado';
 
 const TITULOS: Record<EstadoPedido, { aviso: string; antes: string; enfasis: string; color: string }> = {
   pendiente: { aviso: 'Tu pedido llegó a cocina', antes: 'Ya lo', enfasis: 'recibimos', color: 'text-warning-text' },
@@ -32,6 +33,7 @@ export function OrderStatusPage() {
   const { pedido, error } = usePedido(pedidoId);
   const ahora = useAhora();
   const navigate = useNavigate();
+  useAvisoEstado(pedido?.estado);
 
   if (!pedido) {
     return <Screen><p className="p-6 text-sm text-ink-secondary">{error ? 'No encontramos este pedido.' : 'Cargando tu pedido…'}</p></Screen>;
@@ -55,11 +57,14 @@ export function OrderStatusPage() {
         </div>
       }
     >
-      <div role="status" className="floating flex items-center gap-3 rounded-lg px-3.5 py-3">
-        <span className={`inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full ${fondoAviso[pedido.estado]}`}>
-          <Icon name="notificaciones" size={18} />
+      {/* Notificación del último cambio: con key = estado se vuelve a animar cada vez que la cocina lo cambia. */}
+      <div key={pedido.estado} role="status" className="floating aviso-entra relative flex items-center gap-3 overflow-hidden rounded-lg px-3.5 py-3">
+        <span aria-hidden="true" className="aviso-brillo pointer-events-none absolute inset-0" />
+        <span className={`relative inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-full ${fondoAviso[pedido.estado]}`}>
+          <span aria-hidden="true" className="aviso-pulso absolute inset-0 rounded-full" />
+          <Icon name="notificaciones" size={18} className="aviso-campana block shrink-0" />
         </span>
-        <div className="flex flex-col">
+        <div className="relative flex flex-col">
           <span className="text-sm font-semibold leading-[18px]">{t.aviso}</span>
           <span className="text-xs leading-4 text-ink-secondary">{ctx.restaurante.nombre} · {haceMin < 1 ? 'ahora' : `hace ${haceMin} min`}</span>
         </div>
