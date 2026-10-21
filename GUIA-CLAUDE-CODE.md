@@ -57,3 +57,13 @@ acepta el aviso del certificado de desarrollo y apunta al QR de prueba de la vis
 - "Conecta `src/services` al API Gateway de Bibiana; estos son los endpoints: …"
 - "Cambia `usePedido` para recibir el estado por WebSocket/SSE en lugar de consultar cada 10 s."
 - "Agrega pruebas con Playwright del flujo QR → menú → pedido → pago."
+
+## Ver el prototipo de forma visual
+
+**Rápido, dentro de Claude Code:** al terminar cada cambio pídele
+"Corre npm run build:demo y publícame dist-demo/index.html como artefacto para verlo" (o "toma capturas de las pantallas que cambiaste").
+
+**Enlace fijo con Vercel (gratis):** entra a https://vercel.com, inicia sesión con GitHub,
+"Add New → Project", elige `foodsync-frontend` y toca Deploy (la configuración ya está en `vercel.json`).
+Te da un enlace HTTPS que se actualiza con cada cambio en `main`, y un enlace de vista previa por cada pull request.
+Como es HTTPS, la cámara del QR funciona en el teléfono.
