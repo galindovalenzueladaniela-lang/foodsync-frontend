@@ -45,6 +45,133 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
 }
 
+/* Palomita de éxito (shared/ui/AnimatedCheck). Los estilos base son el estado final;
+   las animaciones solo llevan hasta él (onda y destellos quedan ocultos antes y después).
+   Halos con los tonos success-soft / success de tokens.css. */
+.check-anim__disco {
+  box-shadow: 0 0 0 12px rgba(227, 238, 227, 0.5), 0 0 0 24px rgba(227, 238, 227, 0.25);
+  animation: check-pop 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both, check-halo 700ms 260ms ease-out both;
+}
+.check-anim--solid .check-anim__disco {
+  box-shadow: 0 0 0 7px rgba(93, 140, 102, 0.28), 0 14px 28px -12px rgba(42, 32, 27, 0.55);
+}
+.check-anim__trazo {
+  stroke-dasharray: 1;
+  animation: check-trazo 440ms 250ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.check-anim__onda {
+  opacity: 0;
+  border: 2px solid var(--color-success);
+  animation: check-onda 850ms 320ms ease-out;
+}
+.check-anim__destello {
+  opacity: 0;
+  animation: check-destello 780ms 380ms cubic-bezier(0.15, 0.7, 0.3, 1);
+}
+@keyframes check-pop {
+  0% { opacity: 0; transform: scale(0.3); }
+  55% { opacity: 1; transform: scale(1.08); }
+  78% { transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes check-halo {
+  from { box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent; }
+}
+@keyframes check-trazo {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  1% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes check-onda {
+  from { opacity: 0.6; transform: scale(0.9); }
+  to { opacity: 0; transform: scale(1.9); }
+}
+@keyframes check-destello {
+  0% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * var(--r))) scale(0.3); }
+  25% { opacity: 1; }
+  45% { transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * (var(--r) + var(--d) * 0.75))) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(-1 * (var(--r) + var(--d)))) scale(0.6); }
+}
+/* Aviso (notificación del estado del pedido y avisos breves): entra desde arriba con rebote,
+   un brillo lo cruza y la campana suena con un pulso alrededor. */
+.aviso-entra { animation: aviso-entra 640ms cubic-bezier(0.2, 0.9, 0.25, 1.1) both; }
+.aviso-brillo {
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.75) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: aviso-brillo 1100ms 420ms ease-in-out both;
+}
+.aviso-campana { transform-origin: 50% 20%; animation: aviso-campana 1000ms 380ms ease-in-out both; }
+.aviso-pulso {
+  opacity: 0;
+  border: 2px solid currentColor;
+  animation: aviso-pulso 1300ms 380ms ease-out 2;
+}
+@keyframes aviso-entra {
+  0% { opacity: 0; transform: translateY(-22px) scale(0.94); }
+  60% { opacity: 1; transform: translateY(3px) scale(1.01); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes aviso-brillo { to { transform: translateX(120%); } }
+@keyframes aviso-campana {
+  0%, 100% { transform: rotate(0); }
+  12% { transform: rotate(18deg); }
+  26% { transform: rotate(-15deg); }
+  40% { transform: rotate(10deg); }
+  54% { transform: rotate(-6deg); }
+  68% { transform: rotate(3deg); }
+}
+@keyframes aviso-pulso {
+  from { opacity: 0.55; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.8); }
+}
+
+/* Estado en curso del pedido: latido que se expande desde el punto y un flujo que baja por la
+   línea hacia el siguiente paso (la cocina está trabajando). Color status-en-preparacion. */
+.estado-latido::before,
+.estado-latido::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--color-status-en-preparacion);
+  animation: estado-latido 2400ms cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+.estado-latido::after { animation-delay: 1200ms; }
+.estado-nucleo { animation: estado-nucleo 2400ms ease-in-out infinite; }
+.estado-flujo {
+  background: linear-gradient(180deg, transparent, var(--color-status-en-preparacion), transparent);
+  animation: estado-flujo 1800ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes estado-latido {
+  0% { opacity: 0.4; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+@keyframes estado-nucleo {
+  0%, 100% { transform: scale(0.75); opacity: 0.85; }
+  50% { transform: scale(1); opacity: 1; }
+}
+@keyframes estado-flujo {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(200%); }
+}
+
+/* Comprobante de pago: sale "impreso" de arriba hacia abajo después de la palomita. */
+.recibo-imprime { animation: recibo-imprime 900ms 650ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.recibo-borde {
+  /* Borde inferior dentado del ticket */
+  -webkit-mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 16px 100% repeat-x;
+  mask: radial-gradient(circle 6px at 50% 100%, transparent 98%, #000) 0 0 / 16px 100% repeat-x;
+}
+@keyframes recibo-imprime {
+  from { opacity: 0; transform: translateY(-16px); clip-path: inset(-24px -24px 100% -24px); }
+  to { opacity: 1; transform: none; clip-path: inset(-24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .check-anim *, .aviso-entra, .aviso-brillo, .aviso-campana, .aviso-pulso, .estado-nucleo, .recibo-imprime { animation: none !important; }
+  .estado-latido::before, .estado-latido::after, .estado-flujo { display: none; }
+}
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass, .floating { background: var(--color-surface); }
 }

@@ -65,4 +65,4 @@ Define `VITE_API_URL` (ver `.env.example`). Endpoints que espera el front (propu
 4. **Estados del pedido**: el diseño usa Pendiente → En preparación → Listo → Entregado; los documentos usan Creado/Enviado (modelo de mesas) y Nuevo/Aceptado (KDS). Hay que unificar nombres.
 5. **Tiempo real**: el estado se consulta cada 10 s (`usePedido`). El canal push (SSE/WebSocket desde RabbitMQ) no está definido en la arquitectura.
 6. **Pedidos para llevar** (RF9): el enlace existe en Bienvenida, pero su flujo (nombre, teléfono, enlace temporal) aún no tiene pantallas.
-7. **Moneda e impuestos**: el diseño usa pesos con IVA 8 % incluido en el precio; son configurables por restaurante (`locale`, `currency`, `tasaImpuesto`).
+7. **Moneda e impuestos**: los datos de ejemplo usan pesos mexicanos (`es-MX`, `MXN`: $1,250.00) con IVA 8 % incluido en el precio; son configurables por restaurante (`locale`, `currency`, `tasaImpuesto`).

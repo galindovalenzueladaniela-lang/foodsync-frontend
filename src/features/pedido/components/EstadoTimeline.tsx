@@ -24,15 +24,21 @@ export function EstadoTimeline({ pedido }: { pedido: Pedido }) {
             <div className="flex shrink-0 flex-col items-center">
               <span
                 className={cn(
-                  'inline-flex h-[26px] w-[26px] items-center justify-center rounded-full',
+                  'relative inline-flex h-[26px] w-[26px] items-center justify-center rounded-full',
                   hecho && 'bg-status-listo text-white',
-                  enCurso && 'bg-status-preparacion shadow-[0_0_0_5px_rgba(200,105,58,0.18)]',
+                  enCurso && 'estado-latido bg-status-preparacion shadow-[0_0_0_5px_rgba(200,105,58,0.18)]',
                   !hecho && !enCurso && 'bg-[#EFE8DF]',
                 )}
               >
                 {hecho && <Icon name="check" size={14} strokeWidth={2.2} />}
+                {/* En curso: núcleo que late (la cocina está trabajando en él) */}
+                {enCurso && <span aria-hidden="true" className="estado-nucleo relative z-[1] h-2.5 w-2.5 rounded-full bg-surface" />}
               </span>
-              {i < PASOS.length - 1 && <span className={cn('my-1 min-h-[22px] w-0.5 flex-1', hecho ? 'bg-status-listo' : 'bg-[#EFE8DF]')} />}
+              {i < PASOS.length - 1 && (
+                <span className={cn('relative my-1 min-h-[22px] w-0.5 flex-1 overflow-hidden', hecho ? 'bg-status-listo' : 'bg-[#EFE8DF]')}>
+                  {enCurso && <span aria-hidden="true" className="estado-flujo absolute inset-x-0 top-0 h-1/2" />}
+                </span>
+              )}
             </div>
             <div className="flex flex-col gap-0.5 pb-3.5">
               <span className={cn('text-[15px] leading-[22px]', enCurso ? 'font-semibold text-ink' : hecho ? 'font-medium text-ink' : 'text-ink-muted')}>{paso.titulo}</span>

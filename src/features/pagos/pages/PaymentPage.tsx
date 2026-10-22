@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { rutas } from '../../../app/rutas';
 import { Screen } from '../../../shared/layout/Screen';
 import { Button } from '../../../shared/ui/Button';
 import { ChoiceRow } from '../../../shared/ui/ChoiceRow';
 import { Icon } from '../../../shared/ui/Icon';
 import { SectionLabel } from '../../../shared/ui/SectionLabel';
 import { cn } from '../../../shared/lib/cn';
+import { horaCorta } from '../../../shared/lib/time';
 import { pedidosDeMesa } from '../../../services/pedidoService';
 import { pagarCuenta, solicitarCuenta } from '../../../services/pagoService';
 import type { MetodoPago, Pedido } from '../../../services/types';
-import { useMesa } from '../../mesa/context/MesaContext';
+import { lugarMesa, useMesa } from '../../mesa/context/MesaContext';
+import { PagoConfirmado } from '../components/PagoConfirmado';
 import { calcularCuenta, type Propina } from '../lib/calcularCuenta';
+import type { Comprobante } from '../lib/comprobante';
 
 /* RF11: Original Pay registra pagos digitales, en efectivo, con tarjeta o por transferencia. */
 const METODOS: Array<{ id: MetodoPago; nombre: string; detalle: string; accion: string }> = [
@@ -19,7 +24,7 @@ const METODOS: Array<{ id: MetodoPago; nombre: string; detalle: string; accion: 
   { id: 'transferencia', nombre: 'Transferencia', detalle: 'Bancaria', accion: 'por transferencia' },
 ];
 
-type Resultado = null | 'pagado' | 'aviso';
+type Resultado = null | { tipo: 'pagado'; comprobante: Comprobante } | { tipo: 'aviso' };
 
 /* Paso 8 · Pago y propina: desglose, propina sugerida, método y pago con Original Pay. */
 export function PaymentPage() {
@@ -31,6 +36,7 @@ export function PaymentPage() {
   const [metodo, setMetodo] = useState<MetodoPago>('original_pay');
   const [enviando, setEnviando] = useState(false);
   const [resultado, setResultado] = useState<Resultado>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     solicitarCuenta(ctx.token);
@@ -48,7 +54,7 @@ export function PaymentPage() {
     try {
       const res = await pagarCuenta({ mesaToken: ctx.token, pedidoIds: pedidos?.map((p) => p.id) ?? [], propina: cuenta.propina, metodo });
       if (res.tipo === 'redireccion' && !res.url.startsWith('#')) window.location.href = res.url;
-      else setResultado(res.tipo === 'redireccion' ? 'pagado' : 'aviso');
+      else setResultado(res.tipo === 'redireccion' ? { tipo: 'pagado', comprobante: armarComprobante() } : { tipo: 'aviso' });
     } finally {
       setEnviando(false);
     }
@@ -60,17 +66,35 @@ export function PaymentPage() {
     ['Propina', cuenta.propina],
   ];
 
+  // Lo que se pagó, tal como queda en el comprobante.
+  function armarComprobante(): Comprobante {
+    const emitido = new Date();
+    const dia = new Intl.DateTimeFormat(r.locale, { day: 'numeric', month: 'short', year: 'numeric' }).format(emitido);
+    return {
+      restaurante: r.nombre,
+      lugar: lugarMesa(ctx, { conSucursal: true }),
+      fecha: `${dia} · ${horaCorta(emitido.toISOString())}`,
+      pedidos: numeros ?? '',
+      filas: filas.map(([label, valor]) => [label, money(valor)]),
+      total: money(cuenta.total),
+      metodo: `${m.nombre} · ${m.detalle}`,
+      emitido,
+    };
+  }
+
+  if (resultado?.tipo === 'pagado') {
+    return <PagoConfirmado comprobante={resultado.comprobante} onVolver={() => navigate(rutas.menu(ctx.token))} />;
+  }
+
   return (
     <Screen
       className="gap-4 px-4 pb-4 pt-5"
       footer={
         resultado ? (
-          <div role="status" className="floating flex items-center gap-3 rounded-lg px-4 py-3.5">
+          <div role="status" className="floating aviso-entra flex items-center gap-3 rounded-lg px-4 py-3.5">
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success-soft text-success-text"><Icon name="check" size={18} strokeWidth={2} /></span>
             <p className="text-sm">
-              {resultado === 'pagado'
-                ? <><b className="font-semibold">Pago confirmado.</b> Tu comprobante quedó guardado en esta pantalla. ¡Gracias por venir!</>
-                : <><b className="font-semibold">Avisamos al personal.</b> En un momento llegan a tu mesa para cobrar {m.accion}.</>}
+              <b className="font-semibold">Avisamos al personal.</b> En un momento llegan a tu mesa para cobrar {m.accion}.
             </p>
           </div>
         ) : (
@@ -129,7 +153,7 @@ export function PaymentPage() {
           <label className="flex h-10 items-center gap-2 rounded-md border-[1.5px] border-primary bg-elevated px-3 text-sm">
             <span className="text-ink-secondary">Propina</span>
             <input
-              type="number" inputMode="numeric" min={0} step={1000} autoFocus
+              type="number" inputMode="decimal" min={0} step="any" autoFocus
               value={propina.valor} onChange={(e) => setPropina({ tipo: 'monto', valor: Number(e.target.value) || 0 })}
               className="min-w-0 flex-1 bg-transparent text-right tabular-nums focus:outline-none"
             />

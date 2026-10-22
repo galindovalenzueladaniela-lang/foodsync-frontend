@@ -16,8 +16,8 @@ export const mesaDemo: MesaContexto = {
     cierraA: '23:00',
     contacto: 'hola@casaolivo.co · @casaolivo',
     paraLlevarUrl: '#para-llevar',
-    locale: 'es-CO',
-    currency: 'COP',
+    locale: 'es-MX',
+    currency: 'MXN',
     tasaImpuesto: 0.08,
     propinasSugeridas: [10, 15, 20],
   },
@@ -35,31 +35,31 @@ export const menuDemo: Menu = {
   productos: [
     {
       id: 'burrata', categoriaId: 'entradas', nombre: 'Burrata con tomates asados',
-      descripcion: 'Albahaca del huerto y pistacho.', precio: 34_000, tono: 'paprika',
+      descripcion: 'Albahaca del huerto y pistacho.', precio: 165, tono: 'paprika',
       etiquetas: [], destacado: 'De la casa', disponible: true, variantes: [], extras: [],
     },
     {
       id: 'limonada', categoriaId: 'bebidas', nombre: 'Limonada de hierbabuena',
-      descripcion: 'Hierbabuena fresca y limón.', precio: 12_000, tono: 'salvia', etiquetas: [],
+      descripcion: 'Hierbabuena fresca y limón.', precio: 45, tono: 'salvia', etiquetas: [],
       promocion: { etiqueta: 'Promoción', detalle: '2 × 1 de 17:00 a 19:00.' }, disponible: true, variantes: [], extras: [],
     },
     {
       id: 'risotto', categoriaId: 'fuertes', nombre: 'Risotto de hongos',
       descripcion: 'Arroz arborio, hongos del bosque y parmesano.',
       descripcionLarga: 'Arroz arborio, hongos del bosque, parmesano y aceite de trufa.',
-      precio: 42_000, tono: 'miel', etiquetas: ['Vegetariano'], destacado: 'De la casa', disponible: true,
+      precio: 185, tono: 'miel', etiquetas: ['Vegetariano'], destacado: 'De la casa', disponible: true,
       variantes: [
         { id: 'individual', nombre: 'Porción individual', precioExtra: 0 },
-        { id: 'compartir', nombre: 'Para compartir', precioExtra: 18_000 },
+        { id: 'compartir', nombre: 'Para compartir', precioExtra: 80 },
       ],
       extras: [
-        { id: 'parmesano', nombre: 'Parmesano extra', precioExtra: 4_000 },
-        { id: 'trufa', nombre: 'Aceite de trufa', precioExtra: 6_000 },
+        { id: 'parmesano', nombre: 'Parmesano extra', precioExtra: 25 },
+        { id: 'trufa', nombre: 'Aceite de trufa', precioExtra: 35 },
       ],
     },
     {
       id: 'pesca', categoriaId: 'fuertes', nombre: 'Pesca del día',
-      descripcion: 'Con puré de coliflor y alcaparras.', precio: 58_000, tono: 'pizarra', etiquetas: [], disponible: true,
+      descripcion: 'Con puré de coliflor y alcaparras.', precio: 245, tono: 'pizarra', etiquetas: [], disponible: true,
       variantes: [
         { id: 'coliflor', nombre: 'Puré de coliflor', precioExtra: 0 },
         { id: 'ensalada', nombre: 'Ensalada de la huerta', precioExtra: 0 },
@@ -68,7 +68,7 @@ export const menuDemo: Menu = {
     },
     {
       id: 'cordero', categoriaId: 'fuertes', nombre: 'Cordero a la brasa',
-      descripcion: 'Hierbas de la casa y papas rústicas.', precio: 64_000, tono: 'tinto', etiquetas: [],
+      descripcion: 'Hierbas de la casa y papas rústicas.', precio: 290, tono: 'tinto', etiquetas: [],
       disponible: false, variantes: [], extras: [],
     },
   ],
@@ -87,10 +87,10 @@ export function pedidoDemo(): Pedido {
     ],
     lineas: [
       { productoId: 'risotto', nombre: 'Risotto de hongos', cantidad: 2, varianteId: 'individual', extrasIds: ['parmesano'],
-        detalle: 'Porción individual · Parmesano extra', observaciones: 'Sin cebolla en uno, por favor.', importe: 92_000 },
+        detalle: 'Porción individual · Parmesano extra', observaciones: 'Sin cebolla en uno, por favor.', importe: 420 },
       { productoId: 'pesca', nombre: 'Pesca del día', cantidad: 1, varianteId: 'coliflor', extrasIds: [],
-        detalle: 'Puré de coliflor', observaciones: '', importe: 58_000 },
+        detalle: 'Puré de coliflor', observaciones: '', importe: 245 },
     ],
-    total: 150_000,
+    total: 665,
   };
 }

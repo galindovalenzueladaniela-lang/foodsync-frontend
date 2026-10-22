@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { rutas } from '../../../app/rutas';
 import { Screen } from '../../../shared/layout/Screen';
 import { Button } from '../../../shared/ui/Button';
-import { Icon } from '../../../shared/ui/Icon';
+import { AnimatedCheck } from '../../../shared/ui/AnimatedCheck';
 import { horaCorta } from '../../../shared/lib/time';
 import { useMesa } from '../../mesa/context/MesaContext';
 import { EstadoPill } from '../components/EstadoPill';
@@ -26,9 +26,7 @@ export function ConfirmationPage() {
         </div>
       }
     >
-      <span className="mt-4 inline-flex h-24 w-24 items-center justify-center rounded-full bg-success-soft text-success-text shadow-[0_0_0_12px_rgba(227,238,227,0.5),0_0_0_24px_rgba(227,238,227,0.25)]">
-        <Icon name="check" size={50} strokeWidth={1.8} />
-      </span>
+      <AnimatedCheck size={96} className="mt-4" />
       <div className="flex flex-col gap-2 pt-4">
         <h1 className="display text-[40px] leading-[42px]">¡Pedido <em className="text-primary">recibido!</em></h1>
         <p className="text-[15px] leading-[22px] text-ink-secondary">La cocina ya tiene tu pedido.<br />Te avisaremos aquí cuando cambie de estado.</p>
