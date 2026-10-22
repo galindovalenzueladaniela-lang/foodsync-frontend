@@ -1,5 +1,5 @@
 import { api, espera, usaMocks } from './http';
-import { PedidoSchema, type EstadoPedido, type LineaPedido, type Pedido } from './types';
+import { PedidoSchema, type LineaPedido, type Pedido } from './types';
 import { pedidoDemo } from './mock/data';
 
 const pedidosMock = new Map<string, Pedido>();
@@ -33,7 +33,7 @@ export async function obtenerPedido(id: string): Promise<Pedido> {
     await espera(150);
     const p = getMock(id);
     if (!p) throw new Error('Pedido no encontrado');
-    return avanzarMock(p);
+    return { ...p, historial: [...p.historial] };
   }
   return api(`/cliente/pedidos/${encodeURIComponent(id)}`, PedidoSchema);
 }
@@ -48,16 +48,4 @@ export async function pedidosDeMesa(mesaToken: string): Promise<Pedido[]> {
   return api(`/cliente/mesas/${encodeURIComponent(mesaToken)}/pedidos`, PedidoSchema.array());
 }
 
-/* En el mock, el pedido avanza solo para poder ver la línea de estados. */
-const PASOS: Array<[EstadoPedido, number]> = [['en_preparacion', 0.5], ['listo', 15], ['entregado', 18]];
-function avanzarMock(p: Pedido): Pedido {
-  const min = (Date.now() - new Date(p.creadoEn).getTime()) / 60_000;
-  for (const [estado, desde] of PASOS) {
-    if (min >= desde && !p.historial.some((h) => h.estado === estado)) {
-      const en = new Date(new Date(p.creadoEn).getTime() + desde * 60_000).toISOString();
-      p.historial.push({ estado, en });
-      p.estado = estado;
-    }
-  }
-  return { ...p, historial: [...p.historial] };
-}
+/* En el mock el estado no avanza solo: lo cambiará la cocina cuando su prototipo esté conectado. */

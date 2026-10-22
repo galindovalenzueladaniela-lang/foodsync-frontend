@@ -9,9 +9,9 @@ describe('cartReducer', () => {
   it('calcula importes con variante y extras como en el diseño', () => {
     let s = cartReducer([], { type: 'agregar', producto: risotto, seleccion: { varianteId: 'individual', extrasIds: ['parmesano'] }, observaciones: 'Sin cebolla en uno, por favor.', cantidad: 2 });
     s = cartReducer(s, { type: 'agregar', producto: pesca, seleccion: { varianteId: 'coliflor', extrasIds: [] }, observaciones: '', cantidad: 1 });
-    expect(importeLinea(s[0])).toBe(92_000);
+    expect(importeLinea(s[0])).toBe(420);
     expect(detalleLinea(s[0])).toBe('Porción individual · Parmesano extra');
-    expect(totalCarrito(s)).toBe(150_000);
+    expect(totalCarrito(s)).toBe(665);
   });
 
   it('suma cantidades si la selección es idéntica y separa si cambia', () => {

@@ -153,7 +153,7 @@ export function PaymentPage() {
           <label className="flex h-10 items-center gap-2 rounded-md border-[1.5px] border-primary bg-elevated px-3 text-sm">
             <span className="text-ink-secondary">Propina</span>
             <input
-              type="number" inputMode="numeric" min={0} step={1000} autoFocus
+              type="number" inputMode="decimal" min={0} step="any" autoFocus
               value={propina.valor} onChange={(e) => setPropina({ tipo: 'monto', valor: Number(e.target.value) || 0 })}
               className="min-w-0 flex-1 bg-transparent text-right tabular-nums focus:outline-none"
             />
