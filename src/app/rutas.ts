@@ -10,3 +10,13 @@ export const rutas = {
   estado: (t: string, pedidoId: string) => `/m/${t}/pedido/${pedidoId}`,
   cuenta: (t: string) => `/m/${t}/cuenta`,
 };
+
+/* Rutas de la cocina (KDS · RF10). Pantalla de tablet horizontal o escritorio. */
+export const rutasCocina = {
+  login: () => '/cocina/login',
+  comandas: () => '/cocina',
+  comanda: (id: string) => `/cocina/comanda/${encodeURIComponent(id)}`,
+  pedidos: () => '/cocina/pedidos',
+  notificaciones: () => '/cocina/notificaciones',
+  perfil: () => '/cocina/perfil',
+};
