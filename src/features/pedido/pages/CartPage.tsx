@@ -26,7 +26,7 @@ export function CartPage() {
     try {
       const payload: LineaPedido[] = lineas.map((l) => ({
         productoId: l.producto.id, nombre: l.producto.nombre, cantidad: l.cantidad, varianteId: l.varianteId,
-        extrasIds: l.extrasIds, detalle: detalleLinea(l), observaciones: l.observaciones, importe: importeLinea(l),
+        extrasIds: l.extrasIds, detalle: detalleLinea(l), observaciones: l.observaciones, importe: importeLinea(l), area: l.producto.area,
       }));
       const pedido = await crearPedido(ctx.token, payload);
       dispatch({ type: 'vaciar' });

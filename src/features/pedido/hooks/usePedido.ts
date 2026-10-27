@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { obtenerPedido } from '../../../services/pedidoService';
+import { suscribirTiempoReal } from '../../../services/tiempoReal';
 import type { Pedido } from '../../../services/types';
 
 /**
- * Estado del pedido "en tiempo real" (RF7). Por ahora consulta cada `intervaloMs`;
- * cuando el Gateway exponga un canal push (SSE o WebSocket alimentado por RabbitMQ) basta con cambiar este hook.
+ * Estado del pedido en tiempo real (RF7): se recarga en cuanto la cocina cambia una de sus comandas
+ * (canal de src/services/tiempoReal) y, por si se pierde un evento, también cada `intervaloMs`.
  */
 export function usePedido(id: string, intervaloMs = 10_000) {
   const [pedido, setPedido] = useState<Pedido | null>(null);
@@ -14,7 +15,8 @@ export function usePedido(id: string, intervaloMs = 10_000) {
     const cargar = () => obtenerPedido(id).then((p) => vivo && setPedido(p)).catch(() => vivo && setError(true));
     cargar();
     const t = intervaloMs > 0 ? setInterval(cargar, intervaloMs) : undefined;
-    return () => { vivo = false; if (t) clearInterval(t); };
+    const dejar = suscribirTiempoReal((e) => { if ('pedidoId' in e && e.pedidoId === id) cargar(); });
+    return () => { vivo = false; if (t) clearInterval(t); dejar(); };
   }, [id, intervaloMs]);
   return { pedido, error };
 }

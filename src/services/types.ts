@@ -8,6 +8,9 @@ export const OpcionSchema = z.object({
   precioExtra: z.number().int().nonnegative(),
 });
 
+/** RF10: área de cocina que prepara el producto; separa las comandas en el KDS. */
+export const AreaSchema = z.enum(['caliente', 'fria', 'barra']);
+
 /** Paleta de respaldo cuando el producto aún no tiene fotografía en MediaAAS. */
 export const TonoSchema = z.enum(['paprika', 'salvia', 'miel', 'tinto', 'pizarra']);
 
@@ -20,6 +23,7 @@ export const ProductoSchema = z.object({
   precio: z.number().int().nonnegative(),
   fotoUrl: z.string().url().optional(),
   tono: TonoSchema.default('miel'),
+  area: AreaSchema,
   etiquetas: z.array(z.string()).default([]),
   /** RF4: productos destacados ("De la casa"). */
   destacado: z.string().optional(),
@@ -67,7 +71,11 @@ export const MesaContextoSchema = z.object({
   mesa: z.object({ id: z.string(), numero: z.string(), area: z.string() }),
 });
 
+/** Estados del pedido, únicos para cliente y cocina (ver README: diferencia con "Nuevo/Aceptado" del Anexo E). */
 export const EstadoPedidoSchema = z.enum(['pendiente', 'en_preparacion', 'listo', 'entregado', 'cancelado']);
+
+/** RF10: platillo cancelado en cocina (p. ej. por falta de ingredientes), con su motivo. */
+export const CancelacionSchema = z.object({ motivo: z.string(), en: z.string() });
 
 export const LineaPedidoSchema = z.object({
   productoId: z.string(),
@@ -77,7 +85,10 @@ export const LineaPedidoSchema = z.object({
   extrasIds: z.array(z.string()),
   detalle: z.string(),
   observaciones: z.string(),
-  importe: z.number().int().nonnegative(),
+  importe: z.number().nonnegative(),
+  /** Área de cocina del producto. */
+  area: AreaSchema.optional(),
+  cancelada: CancelacionSchema.optional(),
 });
 
 export const PedidoSchema = z.object({
@@ -88,8 +99,67 @@ export const PedidoSchema = z.object({
   creadoEn: z.string(),
   historial: z.array(z.object({ estado: EstadoPedidoSchema, en: z.string() })),
   lineas: z.array(LineaPedidoSchema),
-  total: z.number().int().nonnegative(),
+  total: z.number().nonnegative(),
 });
+
+/* ---------- Cocina · KDS (RF10) ---------- */
+
+/** Por dónde llegó el pedido. */
+export const CanalSchema = z.enum(['qr', 'mesero', 'para_llevar']);
+
+/** Comanda: la parte de un pedido que prepara un área (un pedido con platos de varias áreas genera varias). */
+export const ComandaSchema = z.object({
+  id: z.string(),
+  pedidoId: z.string(),
+  numero: z.string(),
+  /** "Mesa 7" o "Para llevar". */
+  mesa: z.string(),
+  canal: CanalSchema,
+  area: AreaSchema,
+  estado: EstadoPedidoSchema,
+  creadoEn: z.string(),
+  historial: z.array(z.object({ estado: EstadoPedidoSchema, en: z.string() })),
+  /** Indicaciones del pedido completo (p. ej. "Recogen a las 22:00"). */
+  nota: z.string().optional(),
+  lineas: z.array(z.object({
+    /** Posición de la línea dentro del pedido. */
+    indice: z.number().int().nonnegative(),
+    nombre: z.string(),
+    cantidad: z.number().int().positive(),
+    detalle: z.string(),
+    observaciones: z.string(),
+    cancelada: CancelacionSchema.optional(),
+  })),
+});
+
+export const NotificacionCocinaSchema = z.object({
+  id: z.string(),
+  tipo: z.enum(['nuevo_pedido', 'cancelacion', 'retraso']),
+  titulo: z.string(),
+  detalle: z.string(),
+  comandaId: z.string().optional(),
+  en: z.string(),
+  leida: z.boolean(),
+});
+
+/** RF2: persona del personal autenticada con Original Auth. */
+export const PersonalSchema = z.object({
+  id: z.string(),
+  nombre: z.string(),
+  correo: z.string(),
+  rol: z.string(),
+  /** Área asignada; "todas" para quien coordina el pase. */
+  area: z.union([AreaSchema, z.literal('todas')]),
+  turno: z.object({ nombre: z.string(), horario: z.string(), equipo: z.array(z.string()) }),
+});
+
+/** Eventos en vivo entre cliente y cocina (mock: BroadcastChannel; backend: SSE o WebSocket, ver README). */
+export const EventoTiempoRealSchema = z.discriminatedUnion('tipo', [
+  z.object({ tipo: z.literal('pedido.creado'), pedidoId: z.string(), comandaIds: z.array(z.string()) }),
+  z.object({ tipo: z.literal('comanda.actualizada'), pedidoId: z.string(), comandaId: z.string(), estado: EstadoPedidoSchema }),
+  z.object({ tipo: z.literal('platillo.cancelado'), pedidoId: z.string(), comandaId: z.string(), linea: z.number().int(), motivo: z.string() }),
+  z.object({ tipo: z.literal('notificaciones.actualizadas') }),
+]);
 
 export const MetodoPagoSchema = z.enum(['original_pay', 'efectivo', 'terminal', 'transferencia']);
 
@@ -104,3 +174,9 @@ export type EstadoPedido = z.infer<typeof EstadoPedidoSchema>;
 export type LineaPedido = z.infer<typeof LineaPedidoSchema>;
 export type Pedido = z.infer<typeof PedidoSchema>;
 export type MetodoPago = z.infer<typeof MetodoPagoSchema>;
+export type Area = z.infer<typeof AreaSchema>;
+export type Canal = z.infer<typeof CanalSchema>;
+export type Comanda = z.infer<typeof ComandaSchema>;
+export type NotificacionCocina = z.infer<typeof NotificacionCocinaSchema>;
+export type Personal = z.infer<typeof PersonalSchema>;
+export type EventoTiempoReal = z.infer<typeof EventoTiempoRealSchema>;

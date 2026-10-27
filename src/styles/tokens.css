@@ -37,6 +37,21 @@
   --color-status-listo: #5D8C66;
   --color-status-entregado: #A3958A;
   --color-status-cancelado: #C2533F;
+  /* Cocina · KDS (lienzo 14): fondo espresso, textos claros sobre él, notas y botón "listo" */
+  --color-kds-espresso: #4A3A31;
+  --color-kds-espresso-deep: #241A15;
+  --color-kds-text: #FBF3E8;
+  --color-kds-text-secondary: #D9CCBE;
+  --color-kds-text-muted: #BFB0A2;
+  --color-kds-nota-text: #6A440C;
+  --color-kds-listo-from: #6E9C77;
+  --color-kds-listo-to: #4F7D58;
+  /* Etiquetas neutra y paprika (también usadas por el cliente) y línea punteada de las comandas */
+  --color-neutral-soft: #EFE8DF;
+  --color-neutral-text: #4E4239;
+  --color-paprika-soft: #F7E4D8;
+  --color-paprika-text: #9A4A24;
+  --color-border-dashed: #E1D6C8;
   --font-display: "Instrument Serif", Georgia, serif;
   --font-body: "Instrument Sans", system-ui, sans-serif;
   --space-0-5: 2px;

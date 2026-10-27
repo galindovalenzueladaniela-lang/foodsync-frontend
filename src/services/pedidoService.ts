@@ -1,26 +1,12 @@
 import { api, espera, usaMocks } from './http';
+import * as mock from './mock/cocinaStore';
 import { PedidoSchema, type LineaPedido, type Pedido } from './types';
-import { pedidoDemo } from './mock/data';
 
-const pedidosMock = new Map<string, Pedido>();
-const getMock = (id: string) => {
-  if (!pedidosMock.has(id) && id === 'ped_0418') pedidosMock.set(id, pedidoDemo());
-  return pedidosMock.get(id);
-};
-
-/** RF7: el comensal envía el pedido directo a cocina (S4 Pedidos publica PedidoCreado). */
+/** RF7: el comensal envía el pedido directo a cocina (S4 Pedidos publica PedidoCreado y el KDS lo recibe al instante). */
 export async function crearPedido(mesaToken: string, lineas: LineaPedido[]): Promise<Pedido> {
   if (usaMocks) {
     await espera(400);
-    const ahora = new Date().toISOString();
-    const numero = String(419 + pedidosMock.size).padStart(4, '0');
-    const pedido: Pedido = {
-      id: `ped_${numero}`, numero, mesaToken, estado: 'pendiente', creadoEn: ahora,
-      historial: [{ estado: 'pendiente', en: ahora }],
-      lineas, total: lineas.reduce((s, l) => s + l.importe, 0),
-    };
-    pedidosMock.set(pedido.id, pedido);
-    return pedido;
+    return mock.crearPedidoCliente(mesaToken, lineas);
   }
   return api(`/cliente/mesas/${encodeURIComponent(mesaToken)}/pedidos`, PedidoSchema, {
     method: 'POST',
@@ -28,12 +14,13 @@ export async function crearPedido(mesaToken: string, lineas: LineaPedido[]): Pro
   });
 }
 
+/** Estado del pedido; en el mock lo cambia la cocina desde el KDS (otra pestaña). */
 export async function obtenerPedido(id: string): Promise<Pedido> {
   if (usaMocks) {
     await espera(150);
-    const p = getMock(id);
+    const p = mock.pedidoCliente(id);
     if (!p) throw new Error('Pedido no encontrado');
-    return { ...p, historial: [...p.historial] };
+    return p;
   }
   return api(`/cliente/pedidos/${encodeURIComponent(id)}`, PedidoSchema);
 }
@@ -42,10 +29,7 @@ export async function obtenerPedido(id: string): Promise<Pedido> {
 export async function pedidosDeMesa(mesaToken: string): Promise<Pedido[]> {
   if (usaMocks) {
     await espera(150);
-    getMock('ped_0418');
-    return [...pedidosMock.values()].filter((p) => p.mesaToken === mesaToken && p.estado !== 'cancelado');
+    return mock.pedidosDeMesa(mesaToken);
   }
   return api(`/cliente/mesas/${encodeURIComponent(mesaToken)}/pedidos`, PedidoSchema.array());
 }
-
-/* En el mock el estado no avanza solo: lo cambiará la cocina cuando su prototipo esté conectado. */
