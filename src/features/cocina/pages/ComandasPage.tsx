@@ -10,6 +10,7 @@ import { ErrorCarga } from '../components/Estados';
 import { useCocina } from '../hooks/useCocina';
 import { useSesion } from '../hooks/useSesion';
 import { ESTILO_ESTADO, textoContador } from '../lib/estilos';
+import { cambioReciente } from '../lib/tiempo';
 import { ESTADOS_TABLERO, columnas, columnasVisibles, contarPorEstado, entregadasRecientes, type EstadoTablero, type FiltroArea } from '../lib/filtros';
 
 const AREAS: Array<{ valor: FiltroArea; texto: string }> = [
@@ -56,7 +57,7 @@ export function ComandasPage() {
               )}
             >
               <span aria-hidden="true" className={cn('h-2.5 w-2.5 rounded-full', ESTILO_ESTADO[e].punto)} />
-              {textoContador(e, conteo[e])}
+              <span><span key={conteo[e]} className="kds-pop tabular-nums">{conteo[e]}</span> {textoContador(e, conteo[e])}</span>
               {estado === e && <Icon name="cerrar" size={14} strokeWidth={2} className="block text-ink-secondary" />}
             </button>
           ))}
@@ -69,7 +70,7 @@ export function ComandasPage() {
           detalle="Revisa la conexión del pase. Las comandas no se pierden: aparecerán en cuanto vuelva la señal." onReintentar={recargar}
         />
       ) : (
-        <div className={cn('grid gap-[18px] lg:min-h-0 lg:flex-1', visibles.length === 3 ? 'lg:grid-cols-3' : 'grid-cols-1')}>
+        <div key={`${area}-${estado ?? 'todas'}`} className={cn('kds-aparece grid gap-[18px] lg:min-h-0 lg:flex-1', visibles.length === 3 ? 'lg:grid-cols-3' : 'grid-cols-1')}>
           {visibles.map((e) => (
             <Columna key={e} estado={e} comandas={comandas.tipo === 'listo' ? porColumna[e] : null} ahora={ahora} onAvanzar={avanzar} ampliada={visibles.length === 1} />
           ))}
@@ -82,7 +83,10 @@ export function ComandasPage() {
         {recientes.map((c) => (
           <Link
             key={c.id} to={rutasCocina.comanda(c.id)}
-            className="kds-chip inline-flex h-10 items-center gap-2 rounded-full px-3 text-sm text-kds-text-secondary transition-colors hover:bg-[rgba(255,248,240,0.14)] focus-visible:shadow-focus"
+            className={cn(
+              'kds-chip inline-flex h-10 items-center gap-2 rounded-full px-3 text-sm text-kds-text-secondary transition-colors hover:bg-[rgba(255,248,240,0.14)] focus-visible:shadow-focus',
+              cambioReciente(c.historial, Date.now()) && 'kds-entra',
+            )}
           >
             <Icon name="check" size={14} strokeWidth={2} className="block" />
             {c.mesa} · #{c.numero}

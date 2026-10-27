@@ -124,7 +124,8 @@ export function ComandaDetallePage() {
               ))}
             </ol>
           </section>
-          <BotonEstado comanda={c} onAvanzar={avanzar} />
+          {/* Al avanzar, el botón siguiente entra con un movimiento corto. */}
+          <BotonEstado key={c.estado} comanda={c} onAvanzar={avanzar} className="kds-entra" />
         </aside>
       </div>
 

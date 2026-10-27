@@ -9,7 +9,8 @@ export function EtiquetaEstado({ estado, className }: { estado: EstadoPedido; cl
   const e = ESTILO_ESTADO[estado];
   return (
     <span className={cn('inline-flex h-[26px] items-center gap-[7px] whitespace-nowrap rounded-full pl-[9px] pr-[11px] text-xs font-semibold tracking-[0.01em]', e.pill, className)}>
-      <span aria-hidden="true" className={cn('h-[7px] w-[7px] shrink-0 rounded-full', e.punto, e.anilloPunto)} />
+      {/* En preparación el punto late: la cocina está trabajando en ella. */}
+      <span aria-hidden="true" className={cn('h-[7px] w-[7px] shrink-0 rounded-full', e.punto, e.anilloPunto, estado === 'en_preparacion' && 'kds-punto-vivo')} />
       {e.etiqueta}
     </span>
   );
@@ -20,7 +21,10 @@ export function TiempoChip({ minutos, className }: { minutos: number; className?
   const tono = tonoTiempo(minutos);
   return (
     <span
-      className={cn('inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-base font-bold leading-5 tabular-nums', TONO_TIEMPO[tono], className)}
+      className={cn(
+        'inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-base font-bold leading-5 tabular-nums transition-colors duration-500',
+        TONO_TIEMPO[tono], tono === 'paprika' && 'kds-tiempo-alerta', className,
+      )}
       title={tono === 'normal' ? 'Tiempo transcurrido' : tono === 'miel' ? 'Lleva 15 minutos o más' : 'Lleva 25 minutos o más'}
     >
       <Icon name="reloj" size={16} strokeWidth={2} />

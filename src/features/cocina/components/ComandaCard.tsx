@@ -4,7 +4,7 @@ import { NOMBRE_AREA, NOMBRE_CANAL } from '../../../services/estadosPedido';
 import type { Comanda } from '../../../services/types';
 import { cn } from '../../../shared/lib/cn';
 import { ESTILO_ESTADO } from '../lib/estilos';
-import { minutosDesde } from '../lib/tiempo';
+import { cambioReciente, minutosDesde } from '../lib/tiempo';
 import { BotonEstado } from './BotonEstado';
 import { EtiquetaEstado, NotaCocina, TiempoChip } from './Etiquetas';
 
@@ -16,9 +16,15 @@ export function notasDe(c: Comanda): string[] {
 /* Tarjeta porcelana del lienzo 14: franja del estado, mesa en serif 32 px, platos en 19 px y un solo botón. */
 export function ComandaCard({ comanda: c, ahora, onAvanzar }: { comanda: Comanda; ahora: number; onAvanzar: (c: Comanda) => Promise<void> }) {
   const e = ESTILO_ESTADO[c.estado];
-  const recien = ahora - new Date(c.creadoEn).getTime() < 60_000;
+  // Recién movida de columna: entra deslizándose; si acaba de llegar o de quedar lista, destella.
+  const reciente = cambioReciente(c.historial, Date.now());
   return (
-    <article className={cn('kds-tarjeta relative flex shrink-0 flex-col overflow-hidden border-t-[6px] text-ink transition-[border-color] duration-[250ms]', e.franja, recien && 'aviso-entra')}>
+    <article
+      className={cn(
+        'kds-tarjeta relative flex shrink-0 flex-col overflow-hidden border-t-[6px] text-ink transition-[border-color] duration-[250ms]', e.franja,
+        reciente && 'kds-entra', reciente && c.estado === 'pendiente' && 'kds-destello-nuevo', reciente && c.estado === 'listo' && 'kds-destello-listo',
+      )}
+    >
       <header className="flex items-start justify-between gap-2.5 px-4 pb-2.5 pt-3.5">
         <div className="flex min-w-0 flex-col gap-0.5">
           {/* Toda la tarjeta abre el detalle; el botón de estado queda por encima. */}

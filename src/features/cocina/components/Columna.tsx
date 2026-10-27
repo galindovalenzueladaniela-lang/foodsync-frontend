@@ -12,10 +12,10 @@ export function Columna({ estado, comandas, ahora, onAvanzar, ampliada }: {
   return (
     <section aria-label={e.columna} className="kds-panel flex flex-col gap-3.5 rounded-xl p-3.5 lg:min-h-0">
       <div className="flex items-center gap-2.5 px-1 py-0.5">
-        <span aria-hidden="true" className={cn('h-3 w-3 rounded-full', e.punto, e.anilloColumna)} />
+        <span aria-hidden="true" className={cn('h-3 w-3 rounded-full', e.punto, e.anilloColumna, estado === 'en_preparacion' && 'kds-punto-vivo')} />
         <h2 className="font-sans text-xl font-bold leading-6">{e.columna}</h2>
         <span className="kds-contador ml-auto h-[30px] min-w-[30px] rounded-full px-2.5 text-center text-base font-bold leading-[30px]">
-          {comandas?.length ?? '–'}
+          <span key={comandas?.length ?? -1} className="kds-pop">{comandas?.length ?? '–'}</span>
         </span>
       </div>
       <div

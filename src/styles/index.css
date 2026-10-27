@@ -194,9 +194,63 @@
   to { opacity: 1; transform: none; clip-path: inset(-24px); }
 }
 
+/* Cocina · KDS: movimientos cortos que dicen qué cambió, sin distraer en el pase. */
+.kds-entra { animation: kds-entra 320ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+.kds-aparece { animation: kds-aparece 180ms ease-out both; }
+.kds-pop { display: inline-block; animation: kds-pop 320ms cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+/* Destello interior de la tarjeta: ocre al llegar un pedido, verde al quedar lista. */
+.kds-destello-nuevo, .kds-destello-listo { position: relative; }
+.kds-destello-nuevo::before, .kds-destello-listo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  border-radius: inherit;
+  pointer-events: none;
+  animation: kds-destello 1100ms ease-out 2 both;
+}
+.kds-destello-nuevo::before { --destello: rgba(201, 144, 46, 0.75); }
+.kds-destello-listo::before { --destello: rgba(93, 140, 102, 0.8); }
+/* Punto que late: la comanda está en preparación / hay algo sin leer. */
+.kds-punto-vivo { position: relative; }
+.kds-punto-vivo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: kds-latido 1800ms ease-out infinite;
+}
+/* Tiempo en paprika (25 min o más): pulso suave para que se note de lejos. */
+.kds-tiempo-alerta { animation: kds-alerta 2000ms ease-in-out infinite; }
+@keyframes kds-entra {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes kds-aparece { from { opacity: 0; } }
+@keyframes kds-pop {
+  0% { transform: scale(0.6); }
+  60% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes kds-destello {
+  0% { box-shadow: inset 0 0 0 3px var(--destello), inset 0 0 28px var(--destello); }
+  100% { box-shadow: inset 0 0 0 3px transparent, inset 0 0 28px transparent; }
+}
+@keyframes kds-latido {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.6); }
+}
+@keyframes kds-alerta {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 105, 58, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(200, 105, 58, 0.22); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .check-anim *, .aviso-entra, .aviso-brillo, .aviso-campana, .aviso-pulso, .estado-nucleo, .recibo-imprime { animation: none !important; }
-  .estado-latido::before, .estado-latido::after, .estado-flujo { display: none; }
+  .check-anim *, .aviso-entra, .aviso-brillo, .aviso-campana, .aviso-pulso, .estado-nucleo, .recibo-imprime,
+  .kds-entra, .kds-aparece, .kds-pop, .kds-tiempo-alerta { animation: none !important; }
+  .estado-latido::before, .estado-latido::after, .estado-flujo,
+  .kds-destello-nuevo::before, .kds-destello-listo::before, .kds-punto-vivo::after { display: none; }
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {

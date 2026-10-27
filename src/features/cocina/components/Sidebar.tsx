@@ -16,12 +16,17 @@ function ItemNav({ to, icono, texto, activo, contador, tono = 'primary' }: Item)
         activo ? 'kds-nav-activo font-semibold text-on-primary' : 'border-transparent font-medium text-kds-text-secondary hover:bg-[rgba(255,248,240,0.06)]',
       )}
     >
-      <Icon name={icono} size={20} className={cn('block shrink-0', activo ? 'text-accent' : 'text-kds-text-muted')} />
+      {/* La campana suena cuando llega algo sin leer. */}
+      <Icon
+        key={tono === 'accent' ? `campana-${contador}` : 'icono'} name={icono} size={20}
+        className={cn('block shrink-0', activo ? 'text-accent' : 'text-kds-text-muted', tono === 'accent' && !!contador && 'aviso-campana')}
+      />
       <span className="flex-1 max-xl:sr-only">{texto}</span>
       {!!contador && (
         <span
+          key={`contador-${contador}`}
           className={cn(
-            'h-5 min-w-[22px] rounded-full px-[7px] text-center text-[11px] font-bold leading-5 max-xl:absolute max-xl:right-1 max-xl:top-0',
+            'kds-pop h-5 min-w-[22px] rounded-full px-[7px] text-center text-[11px] font-bold leading-5 max-xl:absolute max-xl:right-1 max-xl:top-0',
             tono === 'primary' ? 'bg-primary text-on-primary' : 'bg-accent text-ink',
           )}
         >

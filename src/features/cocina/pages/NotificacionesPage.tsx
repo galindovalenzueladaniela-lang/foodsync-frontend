@@ -48,15 +48,18 @@ export function NotificacionesPage() {
       )}
       {lista.length > 0 && (
         <ul className="flex flex-col gap-3">
-          {lista.map((n) => {
+          {lista.map((n, i) => {
             const t = TIPO[n.tipo];
             const hace = minutosDesde(n.en, ahora);
             return (
-              <li key={n.id} className={cn('kds-tarjeta flex flex-wrap items-center gap-4 border-l-4 px-5 py-4 text-ink', n.leida ? 'border-l-transparent' : 'border-l-accent')}>
+              <li
+                key={n.id} style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
+                className={cn('kds-tarjeta kds-entra flex flex-wrap items-center gap-4 border-l-4 px-5 py-4 text-ink transition-[border-color] duration-300', n.leida ? 'border-l-transparent' : 'border-l-accent')}
+              >
                 <span className={cn('inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full', t.clase)}><Icon name={t.icono} size={20} /></span>
                 <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span className="flex items-center gap-2 text-base leading-5">
-                    {!n.leida && <span className="h-2 w-2 shrink-0 rounded-full bg-accent" aria-label="Sin leer" />}
+                    {!n.leida && <span className="kds-punto-vivo h-2 w-2 shrink-0 rounded-full bg-accent" aria-label="Sin leer" />}
                     <b className={n.leida ? 'font-semibold' : 'font-bold'}>{n.titulo}</b>
                   </span>
                   <span className="text-[15px] leading-5 text-ink-secondary">{n.detalle}</span>

@@ -31,10 +31,10 @@ export const ESTILO_ESTADO: Record<EstadoPedido, {
   },
 };
 
-/** "2 pendientes", "1 en preparación", "3 listos". */
+/** Lo que sigue al número en los contadores: "2 pendientes", "1 en preparación", "3 listos". */
 export function textoContador(estado: 'pendiente' | 'en_preparacion' | 'listo', n: number): string {
-  if (estado === 'en_preparacion') return `${n} en preparación`;
-  return `${n} ${estado === 'pendiente' ? 'pendiente' : 'listo'}${n === 1 ? '' : 's'}`;
+  if (estado === 'en_preparacion') return 'en preparación';
+  return `${estado === 'pendiente' ? 'pendiente' : 'listo'}${n === 1 ? '' : 's'}`;
 }
 
 /** Un solo botón grande por estado: Empezar preparación → Marcar como listo → Marcar entregado. */

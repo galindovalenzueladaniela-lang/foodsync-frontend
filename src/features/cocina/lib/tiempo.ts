@@ -14,6 +14,12 @@ export function tonoTiempo(minutos: number): TonoTiempo {
   return 'normal';
 }
 
+/** La comanda cambió de estado hace unos segundos (se anima su llegada a la nueva columna). */
+export function cambioReciente(historial: Array<{ en: string }>, ahora: number, ms = 4_000): boolean {
+  const ultimo = historial[historial.length - 1];
+  return !!ultimo && ahora - new Date(ultimo.en).getTime() < ms;
+}
+
 /** "12 min" · "1 h 05 min" */
 export function textoMinutos(minutos: number): string {
   if (minutos < 60) return `${minutos} min`;
